@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "poetry-sagaart"
+version = "0.1.0"
+description = ""
+authors = ["Владислав Шкаровский <vladislav.shkarovskiy@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pendulum = "^3.0.0"
+django = "4.1.0"
+djangorestframework = "3.13.1"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
