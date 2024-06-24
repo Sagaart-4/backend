@@ -26,10 +26,6 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, role=role, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
-        if role == "buyer":
-            Buyer.objects.create(user=user)
-        if role == "seller":
-            Seller.objects.create(user=user)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -54,6 +50,7 @@ class CustomUser(AbstractBaseUser):
         ("buyer", "Buyer"),
         ("seller", "Seller"),
     )
+    id = models.AutoField(primary_key=True, unique=True)
     password = models.CharField(
         max_length=PASSWORD_LENGTH,
         verbose_name="password",
@@ -72,12 +69,15 @@ class CustomUser(AbstractBaseUser):
     objects = CustomUserManager()
 
     USERNAME_FIELD = "id"
-    REQUIRED_FIELDS = ["email", "password"]
+    REQUIRED_FIELDS = ["email", "password", "role"]
 
     class Meta:
         """Класс с метаданными для модели пользователя."""
 
-        unique_together = ("role", "email", "password")
+        unique_together = (
+            "role",
+            "email",
+        )
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
@@ -89,13 +89,13 @@ class CustomUser(AbstractBaseUser):
 class Buyer(models.Model):
     """Модель покупателя."""
 
-    id = models.CharField(max_length=10, unique=True, primary_key=True)
     user = models.OneToOneField(
         CustomUser,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
         related_name="buyer_account",
+        primary_key=True,
     )
     name = models.CharField(
         max_length=USER_NAME_LENGTH,
@@ -136,13 +136,13 @@ class Buyer(models.Model):
 class Seller(models.Model):
     """Модель продавца."""
 
-    id = models.CharField(max_length=10, unique=True, primary_key=True)
     user = models.OneToOneField(
         CustomUser,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
         related_name="seller_account",
+        primary_key=True,
     )
     name = models.CharField(
         max_length=USER_NAME_LENGTH,
