@@ -15,4 +15,6 @@ def create_user_with_account(validated_data: dict) -> CustomUser:
         Buyer.objects.create(user=user)
     if role == "seller":
         Seller.objects.create(user=user)
+    user.is_active = True
+    user.save()
     return user
