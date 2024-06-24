@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="127.0.0.1").split(",")
 
 AUTH_USER_MODEL = "users.CustomUser"
 
@@ -56,7 +56,7 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    "DERAULT_PERMISSIONS_CLASSES": [
+    "DEFAULT_PERMISSIONS_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
