@@ -18,8 +18,8 @@ pre-commit = "^3.7.1"
 isort = "^5.13.2"
 flake8 = "^7.1.0"
 black = "^24.4.2"
-psycopg2 = "^2.9.9"
 pillow = "^10.3.0"
+psycopg2 = "^2.9.9"
 
 
 [build-system]
