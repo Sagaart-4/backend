@@ -2,7 +2,7 @@
 
 from artshop.models import Category, Style
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
@@ -28,7 +28,9 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(
+        self, email, password=None, role="moderator", **extra_fields
+    ):
         """Метод создания суперпользователя."""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
@@ -39,10 +41,10 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(email, password, role, **extra_fields)
 
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     """Кастомная модель пользователя."""
 
     ROLE_CHOICES = (
@@ -58,7 +60,7 @@ class CustomUser(AbstractBaseUser):
     role = models.CharField(max_length=ROLE_LENGTH, choices=ROLE_CHOICES)
     email = models.EmailField(
         max_length=50,
-        unique=False,
+        unique=True,
         validators=[MinLengthValidator(6)],
         verbose_name="email",
     )
@@ -68,16 +70,12 @@ class CustomUser(AbstractBaseUser):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = "id"
-    REQUIRED_FIELDS = ["email", "password", "role"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["password"]
 
     class Meta:
         """Класс с метаданными для модели пользователя."""
 
-        unique_together = (
-            "role",
-            "email",
-        )
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
