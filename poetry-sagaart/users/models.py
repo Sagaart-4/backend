@@ -1,5 +1,6 @@
 """Модуль с кастомными моделями для приложения users."""
 
+from artshop.models import Category, Style
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import MinLengthValidator
@@ -53,21 +54,6 @@ class CustomUser(AbstractBaseUser):
         ("buyer", "Buyer"),
         ("seller", "Seller"),
     )
-    name = models.CharField(
-        max_length=USER_NAME_LENGTH,
-        verbose_name="name",
-    )
-    surname = models.CharField(
-        max_length=USER_SURNAME_LENGTH,
-        verbose_name="surname",
-    )
-    patronymic_surname = models.CharField(
-        max_length=USER_PATRONYMIC_LENGTH,
-        verbose_name="patronymic_surname",
-    )
-    phone_number = models.CharField(
-        max_length=20, help_text="Enter phone number"
-    )
     password = models.CharField(
         max_length=PASSWORD_LENGTH,
         verbose_name="password",
@@ -78,12 +64,6 @@ class CustomUser(AbstractBaseUser):
         unique=False,
         validators=[MinLengthValidator(6)],
         verbose_name="email",
-    )
-    photo = models.ImageField(
-        upload_to="users_photos/",
-        blank=True,
-        null=True,
-        verbose_name="аватар",
     )
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
@@ -103,7 +83,7 @@ class CustomUser(AbstractBaseUser):
 
     def __str__(self):
         """Метод для вывода пользователя на печать."""
-        return f"{self.role} {self.name} {self.surname}"
+        return f"{self.role} {self.email}"
 
 
 class Buyer(models.Model):
@@ -117,15 +97,40 @@ class Buyer(models.Model):
         on_delete=models.CASCADE,
         related_name="buyer_account",
     )
+    name = models.CharField(
+        max_length=USER_NAME_LENGTH,
+        verbose_name="name",
+    )
+    surname = models.CharField(
+        max_length=USER_SURNAME_LENGTH,
+        verbose_name="surname",
+    )
+    patronymic_surname = models.CharField(
+        max_length=USER_PATRONYMIC_LENGTH,
+        verbose_name="patronymic_surname",
+    )
+    phone_number = models.CharField(
+        max_length=20, help_text="Enter phone number"
+    )
     favorite_styles = models.ManyToManyField(
-        "Style",
+        Style,
         verbose_name="Любимые стили",
     )
     favorite_categories = models.ManyToManyField(
-        "Category",
+        Category,
         verbose_name="Любимые категории",
     )
+    photo = models.ImageField(
+        upload_to="users_photos/",
+        blank=True,
+        null=True,
+        verbose_name="аватар",
+    )
     objects = models.Manager()
+
+    def __str__(self):
+        """Метод для вывода покупателя на печать."""
+        return f"{self.name} {self.surname}"
 
 
 class Seller(models.Model):
@@ -139,4 +144,29 @@ class Seller(models.Model):
         on_delete=models.CASCADE,
         related_name="seller_account",
     )
+    name = models.CharField(
+        max_length=USER_NAME_LENGTH,
+        verbose_name="name",
+    )
+    surname = models.CharField(
+        max_length=USER_SURNAME_LENGTH,
+        verbose_name="surname",
+    )
+    patronymic_surname = models.CharField(
+        max_length=USER_PATRONYMIC_LENGTH,
+        verbose_name="patronymic_surname",
+    )
+    phone_number = models.CharField(
+        max_length=20, help_text="Enter phone number"
+    )
+    photo = models.ImageField(
+        upload_to="users_photos/",
+        blank=True,
+        null=True,
+        verbose_name="аватар",
+    )
     objects = models.Manager()
+
+    def __str__(self):
+        """Метод для вывода продавца на печать."""
+        return f"{self.name} {self.surname}"
