@@ -84,15 +84,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"{self.role} {self.email}"
 
 
-class Buyer(models.Model):
-    """Модель покупателя."""
+class BuyerProfile(models.Model):
+    """Модель профиля покупателя."""
 
     user = models.OneToOneField(
         CustomUser,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        related_name="buyer_account",
+        related_name="buyer_profile",
         primary_key=True,
     )
     name = models.CharField(
@@ -131,15 +131,15 @@ class Buyer(models.Model):
         return f"{self.name} {self.surname}"
 
 
-class Seller(models.Model):
-    """Модель продавца."""
+class SellerProfile(models.Model):
+    """Модель профиля продавца."""
 
     user = models.OneToOneField(
         CustomUser,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        related_name="seller_account",
+        related_name="seller_profile",
         primary_key=True,
     )
     name = models.CharField(
