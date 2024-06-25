@@ -1,7 +1,7 @@
 """Модуль с функциями для приложения users."""
 
 from django.db import transaction
-from users.models import Buyer, Seller
+from users.models import BuyerProfile, SellerProfile
 
 from .models import CustomUser
 
@@ -12,9 +12,9 @@ def create_user_with_account(validated_data: dict) -> CustomUser:
     user = CustomUser.objects.create_user(**validated_data)
     role = validated_data.get("role")
     if role == "buyer":
-        Buyer.objects.create(user=user)
+        BuyerProfile.objects.create(user=user)
     if role == "seller":
-        Seller.objects.create(user=user)
+        SellerProfile.objects.create(user=user)
     user.is_active = True
     user.save()
     return user
