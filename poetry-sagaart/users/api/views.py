@@ -13,7 +13,7 @@ from users.models import BuyerProfile, CustomUser, SellerProfile
 
 
 class CustomUserViewSet(UserViewSet):
-    """Кастомный viewset для пользователей."""
+    """Вьюсет для модели пользователей."""
 
     def get_queryset(self):
         """Метод для получения queryset-а пользователя."""
@@ -66,7 +66,7 @@ class CustomUserViewSet(UserViewSet):
         return self.serializer_class
 
     def destroy(self, request, *args, **kwargs):
-        """Удалить аккаунт текущего пользователя."""
+        """Метод для удаления аккаунта текущего пользователя."""
         user = request.user
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
