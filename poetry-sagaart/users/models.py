@@ -1,11 +1,13 @@
 """Модуль с кастомными моделями для приложения users."""
 
-from artshop.models import Category, Style
+# from artshop.models import Category, Style
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
+
+# from artshop.models import StyleBuyerProfile, CategoryBuyerProfile
 
 USER_SURNAME_LENGTH = 150
 USER_PATRONYMIC_LENGTH = 150
@@ -13,6 +15,8 @@ USER_NAME_LENGTH = 150
 EMAIL_LENGTH = 254
 PASSWORD_LENGTH = 150
 ROLE_LENGTH = 15
+STYLE_NAME_LENGTH = 50
+CATEGORY_NAME_LENGTH = 50
 
 
 class CustomUserManager(BaseUserManager):
@@ -111,12 +115,22 @@ class BuyerProfile(models.Model):
         max_length=20, help_text="Enter phone number"
     )
     favorite_styles = models.ManyToManyField(
-        Style,
+        "artshop.Style",
         verbose_name="Любимые стили",
+        through="artshop.StyleBuyerProfile",
+    )
+    favorite_style = models.CharField(
+        max_length=STYLE_NAME_LENGTH,
+        verbose_name="favorite_style",
     )
     favorite_categories = models.ManyToManyField(
-        Category,
+        "artshop.Category",
         verbose_name="Любимые категории",
+        through="artshop.CategoryBuyerProfile",
+    )
+    favorite_category = models.CharField(
+        max_length=CATEGORY_NAME_LENGTH,
+        verbose_name="favorite_category",
     )
     photo = models.ImageField(
         upload_to="users_photos/",
