@@ -10,7 +10,7 @@ services:
     restart: always
     env_file: .env
     volumes:
-      - ../poetry-sagaart:/app/
+      - backend_static:/backend_static
     depends_on:
       - db
 
