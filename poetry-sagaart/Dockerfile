@@ -3,13 +3,11 @@ FROM python:3.11
 RUN apt-get update && \
     pip install --no-cache-dir poetry
 
-RUN mkdir /app
-
 RUN poetry config virtualenvs.create false
 
 WORKDIR /app
 
-COPY ./poetry-sagaart/pyproject.toml ./
+COPY ./pyproject.toml ./
 
 RUN poetry install
 
