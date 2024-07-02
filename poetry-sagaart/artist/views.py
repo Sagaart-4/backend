@@ -1,8 +1,9 @@
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import get_object_or_404
-from .models import FavoriteArtist, Artist, User
+
+from .models import Artist, BuyerProfile as User, FavoriteArtist
 from .serializers import ArtistSerializer, FavoriteArtistSerializer
 
 
@@ -68,7 +69,7 @@ class FavoriteArtistListView(APIView):
     """Представление для просмотра списка избранных художников."""
 
     def get(self, request, userId, *args, **kwargs):
-        """Обрабатывает GET-запрос для получения списка избранных художников."""
+        """Обрабатывает GET-запрос для получения списка избранных художников"""
         user = get_object_or_404(User, id=userId)
         favorite_artists = FavoriteArtist.objects.filter(user=user)
 

@@ -104,6 +104,7 @@ class BuyerProfileSerializer(serializers.ModelSerializer):
             "preferCategories",
             "photo",
             "subscription",
+            "favoriteArtist",
         )
 
         def update(self, instance, validated_data):

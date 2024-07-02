@@ -8,12 +8,22 @@ class Artist(models.Model):
     """Модель, представляющая художника с различными атрибутами."""
 
     artist_id = models.AutoField(
-        primary_key=True, help_text="Уникальный идентификатор художника"
+        primary_key=True,
+        help_text="Уникальный идентификатор художника"
     )
-    first_name = models.CharField(max_length=100, help_text="Имя художника")
-    last_name = models.CharField(max_length=100, help_text="Фамилия художника")
+    first_name = models.CharField(
+        max_length=100,
+        help_text="Имя художника"
+    )
+    last_name = models.CharField(
+        max_length=100,
+        help_text="Фамилия художника"
+    )
     pseudonym = models.CharField(
-        max_length=100, blank=True, null=True, help_text="Псевдоним художника"
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Псевдоним художника"
     )
     photo = models.ImageField(
         upload_to="artists/photos/",
@@ -22,7 +32,9 @@ class Artist(models.Model):
         help_text="Фотография художника",
     )
     biography = models.TextField(
-        blank=True, null=True, help_text="Биография художника"
+        blank=True,
+        null=True,
+        help_text="Биография художника"
     )
     gender = models.CharField(
         max_length=10,
@@ -32,7 +44,9 @@ class Artist(models.Model):
         help_text="Пол художника",
     )
     birth_year = models.IntegerField(
-        blank=True, null=True, help_text="Год рождения художника"
+        blank=True,
+        null=True,
+        help_text="Год рождения художника"
     )
     birth_city = models.CharField(
         max_length=100,
@@ -71,13 +85,19 @@ class Artist(models.Model):
         help_text="Персональный стиль художника",
     )
     individual_exhibitions = models.TextField(
-        blank=True, null=True, help_text="Индивидуальные показы художника"
+        blank=True,
+        null=True,
+        help_text="Индивидуальные показы художника"
     )
     group_exhibitions = models.TextField(
-        blank=True, null=True, help_text="Групповые показы художника"
+        blank=True,
+        null=True,
+        help_text="Групповые показы художника"
     )
     private_collections = models.TextField(
-        blank=True, null=True, help_text="Включение работ в частные коллекции"
+        blank=True,
+        null=True,
+        help_text="Включение работ в частные коллекции"
     )
     institution_inclusion = models.TextField(
         blank=True,
@@ -90,10 +110,14 @@ class Artist(models.Model):
         help_text="Обладание высшими отраслевыми наградами",
     )
     vk_link = models.URLField(
-        blank=True, null=True, help_text="Ссылка на VK художника"
+        blank=True,
+        null=True,
+        help_text="Ссылка на VK художника"
     )
     telegram_link = models.URLField(
-        blank=True, null=True, help_text="Ссылка на Telegram художника"
+        blank=True,
+        null=True,
+        help_text="Ссылка на Telegram художника"
     )
     average_work_price = models.DecimalField(
         max_digits=10,
@@ -124,7 +148,7 @@ class FavoriteArtist(models.Model):
     )
     user = models.ForeignKey(
         BuyerProfile,
-        verbose_name="Ценитель автора",
+        verbose_name="Поклонник автора",
         on_delete=models.CASCADE,
     )
 
