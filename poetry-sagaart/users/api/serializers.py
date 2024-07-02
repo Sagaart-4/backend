@@ -56,7 +56,7 @@ class SubscriptionGetSerializer(serializers.ModelSerializer):
     """Сериализатор для получения подписки."""
 
     subscriptionId = serializers.IntegerField(source="id")
-    userId = serializers.IntegerField(source="user_id")
+    userId = serializers.IntegerField(source="user.id")
     autoSubs = serializers.BooleanField(source="auto_renewal")
     subsPeriod = serializers.IntegerField(source="duration")
     subsDateOn = serializers.DateTimeField(source="start_date")
@@ -71,6 +71,7 @@ class SubscriptionGetSerializer(serializers.ModelSerializer):
             "autoSubs",
             "subsPeriod",
             "subsDateOn",
+            "status",
         )
 
 
@@ -87,7 +88,7 @@ class BuyerProfileSerializer(serializers.ModelSerializer):
         many=True, source="favorite_categories"
     )
     favoriteArtist = ArtistSerializer(many=True, source="favorite_artists")
-    subscription = SubscriptionGetSerializer(source="subscriptions")
+    subscription = SubscriptionGetSerializer(many=True, source="subscriptions")
 
     class Meta:
         """Класс с метаданными для сериализатора покупателя."""
@@ -104,14 +105,14 @@ class BuyerProfileSerializer(serializers.ModelSerializer):
             "preferCategories",
             "photo",
             "subscription",
-            "favoriteArtist",
+            'favoriteArtist',
         )
 
         def update(self, instance, validated_data):
             """Метод для обновления экземпляра модели профиля покупателя."""
-            styles = validated_data.pop("preferStyle")
-            categories = validated_data.pop("preferCategory")
-            buyer_profile_instance = SellerProfile.objects.get(
+            styles = validated_data.pop("preferStyle", [])
+            categories = validated_data.pop("preferCategory", [])
+            buyer_profile_instance = BuyerProfile.objects.get(
                 user=instance.id
             )
             for style in styles:
