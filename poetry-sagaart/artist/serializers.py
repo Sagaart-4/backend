@@ -14,18 +14,12 @@ class ArtistSerializer(serializers.ModelSerializer):
     nameArtist = serializers.CharField(
         source="first_name"
     )
-    pseudonym = serializers.CharField(
-        source="pseudonym"
-    )
+    pseudonym = serializers.CharField()
     fotoArtist = serializers.ImageField(
         source="photo"
     )
-    biography = serializers.CharField(
-        source="biography"
-    )
-    gender = serializers.CharField(
-        source="gender"
-    )
+    biography = serializers.CharField()
+    gender = serializers.CharField()
     yearOfBirth = serializers.IntegerField(
         source="birth_year"
     )
@@ -35,9 +29,7 @@ class ArtistSerializer(serializers.ModelSerializer):
     cityOfResidence = serializers.CharField(
         source="residence_city"
     )
-    education = serializers.CharField(
-        source="education"
-    )
+    education = serializers.CharField()
     artEducation = serializers.CharField(
         source="art_education"
     )
