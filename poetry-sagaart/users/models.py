@@ -132,6 +132,11 @@ class BuyerProfile(models.Model):
         max_length=CATEGORY_NAME_LENGTH,
         verbose_name="favorite_category",
     )
+    favorite_artists = models.ManyToManyField(
+        "artist.Artist",
+        verbose_name="Любимые художники",
+        through="artist.FavoriteArtist",
+    )
     photo = models.ImageField(
         upload_to="users_photos/",
         blank=True,

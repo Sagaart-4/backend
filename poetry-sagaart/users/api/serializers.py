@@ -1,6 +1,7 @@
 """Модуль с сериализаторами для приложения users."""
 
 from api.serializers import CategorySerializer, StyleSerializer
+from artist.serializers import ArtistSerializer
 from artshop.models import Category, Style, StyleBuyerProfile
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
@@ -85,6 +86,7 @@ class BuyerProfileSerializer(serializers.ModelSerializer):
     preferCategories = CategorySerializer(
         many=True, source="favorite_categories"
     )
+    favoriteArtist = ArtistSerializer(many=True, source="favorite_artists")
     subscription = SubscriptionGetSerializer(source="subscriptions")
 
     class Meta:
@@ -144,13 +146,15 @@ class SellerProfileSerializer(serializers.ModelSerializer):
 class CustomUserIsBuyerSerializer(UserSerializer):
     """Cериализатор для пользователя покупателя."""
 
+    userId = serializers.IntegerField(source="id")
+    userRole = serializers.CharField(source="role")
     buyer_profile = BuyerProfileSerializer()
 
     class Meta:
         """Класс с метаданными для сериализатора пользователя+покупателя."""
 
         model = CustomUser
-        fields = ("id", "email", "role", "buyer_profile")
+        fields = ("userId", "email", "userRole", "buyer_profile")
         read_only_fields = ("email",)
 
     def update(self, instance, validated_data):
@@ -166,13 +170,15 @@ class CustomUserIsBuyerSerializer(UserSerializer):
 class CustomUserIsSellerSerializer(UserSerializer):
     """Cериализатор для пользователя продавца."""
 
+    userId = serializers.IntegerField(source="id")
+    userRole = serializers.CharField(source="role")
     seller_profile = SellerProfileSerializer()
 
     class Meta:
         """Класс с метаданными для сериализатора пользователя+продавца."""
 
         model = CustomUser
-        fields = ("id", "email", "role", "seller_profile")
+        fields = ("userId", "email", "userRole", "seller_profile")
         read_only_fields = ("email",)
 
     def update(self, instance, validated_data):
