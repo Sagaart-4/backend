@@ -4,7 +4,8 @@ from api.serializers import CategorySerializer, StyleSerializer
 from artshop.models import Category, Style, StyleBuyerProfile
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
-from users.models import BuyerProfile, CustomUser, SellerProfile
+from rest_framework_simplejwt.tokens import RefreshToken
+from users.models import BuyerProfile, CustomUser, SellerProfile, Subscription
 from users.utils import create_user_with_account
 
 
@@ -21,6 +22,56 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         """Метод для создания пользователя с аккаунтом."""
         return create_user_with_account(validated_data)
 
+    def to_representation(self, instance):
+        """Метод для настройки отображения ответа."""
+        data = super(CustomUserCreateSerializer, self).to_representation(
+            instance
+        )
+        user_tokens = RefreshToken.for_user(instance)
+        tokens = {
+            "refresh": str(user_tokens),
+            "access": str(user_tokens.access_token),
+        }
+        data = data | tokens
+        return data
+
+
+class SubscriptionCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания подписки."""
+
+    userId = serializers.IntegerField(source="user_id")
+    autoSubs = serializers.BooleanField(source="auto_renewal")
+    subsPeriod = serializers.IntegerField(source="duration")
+    subsDateOn = serializers.DateTimeField(source="start_date")
+
+    class Meta:
+        """Класс с метаданными для сериализатора подписки."""
+
+        model = Subscription
+        fields = ("userId", "autoSubs", "subsPeriod", "subsDateOn")
+
+
+class SubscriptionGetSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения подписки."""
+
+    subscriptionId = serializers.IntegerField(source="id")
+    userId = serializers.IntegerField(source="user_id")
+    autoSubs = serializers.BooleanField(source="auto_renewal")
+    subsPeriod = serializers.IntegerField(source="duration")
+    subsDateOn = serializers.DateTimeField(source="start_date")
+
+    class Meta:
+        """Класс с метаданными для сериализатора подписки."""
+
+        model = Subscription
+        fields = (
+            "subscriptionId",
+            "userId",
+            "autoSubs",
+            "subsPeriod",
+            "subsDateOn",
+        )
+
 
 class BuyerProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для модели профиля покупателя."""
@@ -34,6 +85,7 @@ class BuyerProfileSerializer(serializers.ModelSerializer):
     preferCategories = CategorySerializer(
         many=True, source="favorite_categories"
     )
+    subscription = SubscriptionGetSerializer(source="subscriptions")
 
     class Meta:
         """Класс с метаданными для сериализатора покупателя."""
@@ -49,6 +101,7 @@ class BuyerProfileSerializer(serializers.ModelSerializer):
             "preferStyles",
             "preferCategories",
             "photo",
+            "subscription",
         )
 
         def update(self, instance, validated_data):
@@ -97,7 +150,7 @@ class CustomUserIsBuyerSerializer(UserSerializer):
         """Класс с метаданными для сериализатора пользователя+покупателя."""
 
         model = CustomUser
-        fields = ("id", "email", "buyer_profile")
+        fields = ("id", "email", "role", "buyer_profile")
         read_only_fields = ("email",)
 
     def update(self, instance, validated_data):
@@ -119,7 +172,7 @@ class CustomUserIsSellerSerializer(UserSerializer):
         """Класс с метаданными для сериализатора пользователя+продавца."""
 
         model = CustomUser
-        fields = ("id", "email", "seller_profile")
+        fields = ("id", "email", "role", "seller_profile")
         read_only_fields = ("email",)
 
     def update(self, instance, validated_data):

@@ -64,7 +64,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=ROLE_LENGTH, choices=ROLE_CHOICES)
     email = models.EmailField(
         max_length=50,
-        unique=True,
         validators=[MinLengthValidator(6)],
         verbose_name="email",
     )
@@ -74,7 +73,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = "id"
     REQUIRED_FIELDS = ["password"]
 
     class Meta:
@@ -82,6 +81,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        unique_together = ("role", "email")
 
     def __str__(self):
         """Метод для вывода пользователя на печать."""
@@ -182,3 +182,25 @@ class SellerProfile(models.Model):
     def __str__(self):
         """Метод для вывода продавца на печать."""
         return f"{self.name} {self.surname}"
+
+
+class Subscription(models.Model):
+    """Модель подписки на расширенный функционал сайта."""
+
+    STATUS_CHOICES = (
+        ("active", "Active"),
+        ("expired", "Expired"),
+        ("canceled", "Canceled"),
+    )
+
+    id = models.AutoField(primary_key=True, unique=True)
+    user_id = models.ForeignKey(
+        BuyerProfile,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+        verbose_name="подписчик",
+    )
+    auto_renewal = models.BooleanField(default=False)
+    duration = models.IntegerField()
+    start_date = models.DateTimeField(default=timezone.now)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=20)
