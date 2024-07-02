@@ -6,6 +6,7 @@ from users.api.views import (
     BuyerProfileViewSet,
     CustomUserViewSet,
     SellerProfileViewSet,
+    SubscriptionViewSet,
 )
 
 v1_router = DefaultRouter()
@@ -13,6 +14,9 @@ v1_router = DefaultRouter()
 v1_router.register("buyers", BuyerProfileViewSet, basename="buyers")
 v1_router.register("sellers", SellerProfileViewSet, basename="sellers")
 v1_router.register(r"users", CustomUserViewSet, basename="customuser")
+v1_router.register(
+    "subscription", SubscriptionViewSet, basename="subscription"
+)
 
 
 urlpatterns = [
