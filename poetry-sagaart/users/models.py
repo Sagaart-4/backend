@@ -63,6 +63,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     role = models.CharField(max_length=ROLE_LENGTH, choices=ROLE_CHOICES)
     email = models.EmailField(
+        unique=True,
         max_length=50,
         validators=[MinLengthValidator(6)],
         verbose_name="email",
