@@ -6,11 +6,8 @@ import numpy as np
 from rest_framework.permissions import AllowAny
 
 
-
 class DataView(viewsets.ViewSet):
     """Представление для расчета стоимости."""
-
-    permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
         """Обрабатывает POST-запрос для цены."""
