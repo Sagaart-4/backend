@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "artist.apps.ArtistConfig",
     "artshop.apps.ArtshopConfig",
     "drf_spectacular",
+    "analytics.apps.AnalyticsConfig",
 ]
 
 REST_FRAMEWORK = {
