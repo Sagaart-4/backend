@@ -42,11 +42,11 @@
 
    Теперь приложение должно быть доступно по адресу:
 
-   http://localhost
+   http://localhost:8000
 
    А документация доступна по адресу:
 
-   http://localhost/api/v1/swagger/
+   http://localhost:8000/api/v1/swagger/
 
 </details>
 
