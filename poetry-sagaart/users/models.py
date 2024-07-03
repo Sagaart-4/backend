@@ -73,7 +73,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = "id"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["password"]
 
     class Meta:
@@ -81,7 +81,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
-        unique_together = ("role", "email")
+        # unique_together = ("role", "email")
 
     def __str__(self):
         """Метод для вывода пользователя на печать."""
