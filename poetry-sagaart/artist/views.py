@@ -29,8 +29,8 @@ class FavoriteArtistCreateView(APIView):
         """Обрабатывает POST-запрос для добавления художника в избранное."""
         artist_id = request.data.get('artistID')
         user_id = request.data.get('userID')
-        artist = get_object_or_404(Artist, id=artist_id)
-        user = get_object_or_404(User, id=user_id)
+        artist = get_object_or_404(Artist, artist_id=artist_id)
+        user = get_object_or_404(User, pk=user_id)
 
         if FavoriteArtist.objects.filter(artist=artist, user=user).exists():
             return Response({
@@ -41,7 +41,7 @@ class FavoriteArtistCreateView(APIView):
             artist=artist, user=user
         )
         return Response({
-            "artistID": favorite_artist.artist.id,
+            "artistID": favorite_artist.artist.artist_id,
             "userID": favorite_artist.user.id,
             "message": "Артист добавлен в избранное"
         }, status=status.HTTP_201_CREATED)
@@ -52,8 +52,8 @@ class FavoriteArtistDeleteView(APIView):
 
     def delete(self, request, artistId, userId, *args, **kwargs):
         """Обрабатывает DELETE-запрос для удаления художника из избранного."""
-        artist = get_object_or_404(Artist, id=artistId)
-        user = get_object_or_404(User, id=userId)
+        artist = get_object_or_404(Artist, artist_id=artistId)
+        user = get_object_or_404(User, pk=userId)
         favorite_artist = get_object_or_404(
             FavoriteArtist,
             artist=artist,
@@ -70,7 +70,7 @@ class FavoriteArtistListView(APIView):
 
     def get(self, request, userId, *args, **kwargs):
         """Обрабатывает GET-запрос для получения списка избранных художников"""
-        user = get_object_or_404(User, id=userId)
+        user = get_object_or_404(User, pk=userId)
         favorite_artists = FavoriteArtist.objects.filter(user=user)
 
         if not favorite_artists:
