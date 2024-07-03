@@ -1,13 +1,10 @@
 """Модуль с кастомными моделями для приложения users."""
 
-# from artshop.models import Category, Style
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
-
-# from artshop.models import StyleBuyerProfile, CategoryBuyerProfile
 
 USER_SURNAME_LENGTH = 150
 USER_PATRONYMIC_LENGTH = 150
@@ -63,6 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     role = models.CharField(max_length=ROLE_LENGTH, choices=ROLE_CHOICES)
     email = models.EmailField(
+        unique=True,
         max_length=50,
         validators=[MinLengthValidator(6)],
         verbose_name="email",
@@ -199,7 +197,7 @@ class Subscription(models.Model):
     )
 
     id = models.AutoField(primary_key=True, unique=True)
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         BuyerProfile,
         on_delete=models.CASCADE,
         related_name="subscriptions",
@@ -208,4 +206,6 @@ class Subscription(models.Model):
     auto_renewal = models.BooleanField(default=False)
     duration = models.IntegerField()
     start_date = models.DateTimeField(default=timezone.now)
-    status = models.CharField(choices=STATUS_CHOICES, max_length=20)
+    status = models.CharField(
+        choices=STATUS_CHOICES, max_length=20, default="active"
+    )

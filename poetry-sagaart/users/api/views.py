@@ -4,9 +4,9 @@ from djoser.conf import settings
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from users.api.permissions import IsAuthorOrAdminOrReadOnly
+from users.api.permissions import IsAuthorOrAdmin
 from users.api.serializers import (
     BuyerProfileSerializer,
     SellerProfileSerializer,
@@ -81,7 +81,6 @@ class SellerProfileViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = SellerProfile.objects.all()
     serializer_class = SellerProfileSerializer
-    # pagination_class = CustomizedPaginator
     permission_classes = (AllowAny,)
 
 
@@ -90,7 +89,6 @@ class BuyerProfileViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = BuyerProfile.objects.all()
     serializer_class = BuyerProfileSerializer
-    # pagination_class = CustomizedPaginator
     permission_classes = (AllowAny,)
 
 
@@ -98,7 +96,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели подписки."""
 
     queryset = Subscription.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthorOrAdmin,)
 
     def get_serializer_class(self):
         """Метод метод для определения класса сериализатора."""
@@ -106,21 +104,15 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             return SubscriptionGetSerializer
         return SubscriptionCreateSerializer
 
-    def get_permissions(self):
-        """Метод для определения типа разрешения."""
-        if self.action == "create":
-            return (IsAuthenticated(),)
-        return (IsAuthorOrAdminOrReadOnly(),)
-
     def create(self, request, *args, **kwargs):
         """Метод для создания подписки."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         subscription = Subscription.objects.create(
-            user_id=serializer.data["user_id"],
-            auto_renewal=serializer.data["auto_renewal"],
-            duration=serializer.data["duration"],
-            start_date=serializer.data["start_date"],
+            user_id=serializer.data["userId"],
+            auto_renewal=serializer.data["autoSubs"],
+            duration=serializer.data["subsPeriod"],
+            start_date=serializer.data["subsDateOn"],
         )
         headers = self.get_success_headers(serializer.data)
         result = SubscriptionGetSerializer(subscription)
@@ -130,14 +122,11 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=["get"],
-        permission_classes=[IsAuthorOrAdminOrReadOnly],
+        methods=["post"],
     )
     def cancel(self, request, pk=None):
         """Отменяет подписку."""
-        # subscription = self.get_object()
         Subscription.objects.filter(pk=pk).update(status="canceled")
-        # serializer = Serializer(comments, many=True)
         return Response(
             {"message": "Подписка успешно отключена."},
             status=status.HTTP_200_OK,
